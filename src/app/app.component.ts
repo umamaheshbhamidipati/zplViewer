@@ -12,19 +12,20 @@ export class AppComponent implements OnInit{
   tpyeOfCode: any = 'qrCode';
   sizeOfCode: any = '';
   width: any = '4';
-  height: any = '6';
+  height: any = '1';
   printDensity: any = '8';
   zplCode: any = `
   ^XA
-^CF0,30
-^FO0,60^FDMFG: Dhanuka^FS
-^FO0,100^FDITEM: 38102^FS
-^FO0,140^FDExp: 10/2020^FS
-^FO200,40^BQ,2,5
-^FDHA,123456Text^FS
-^CFA,20
-^FO200,180^FD123456Text^FS
-^XZ
+  ^CF0,30
+  ^FO20,60^FDMFG: Dhanuka^FS
+  ^FO20,100^FDITEM: 38102^FS
+  ^FO20,140^FDExp: 10/2020^FS
+  ^FO220,30^BQ,2,5
+  ^FDHA,123456Text^FS
+  ^CFA,20
+  ^FO220,180^FD123456Text^FS
+  ^XZ
+    
   `;
   blobSrc: any;
   sampleBlobSrc: any;
@@ -89,8 +90,8 @@ export class AppComponent implements OnInit{
     this.codes.push(this.fb.group({
       textWeight: [],
       size: [],
-      x: ['10'],
-      y:['10'],
+      x: ['20'],
+      y:['20'],
       type: ['^FD'],
       text: [],
       length: ['30'],

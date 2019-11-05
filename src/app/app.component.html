@@ -79,12 +79,27 @@
                 </mat-select>
               </mat-form-field>
               <mat-form-field class="preview-field" *ngIf="ZPLForm.controls.zplCodes.value[i].type == '^FD'">
-                <mat-label>Text Weight (Bold/Light)</mat-label>
+                <mat-label>Font Family / Weights</mat-label>
                 <mat-select formControlName="textWeight">
-                  <mat-option value="^CFA">Lighter</mat-option>
-                  <mat-option value="^CF0">Bolder</mat-option>
+                  <mat-option value="^CFA">Font A (Lighter)</mat-option>
+                  <mat-option value="^CFB">Font B</mat-option>
+                  <mat-option value="^CFD">Font D</mat-option>
+                  <mat-option value="^CFE">Font E</mat-option>
+                  <mat-option value="^CFF">Font F</mat-option>
+                  <mat-option value="^CFG">Font G</mat-option>
+                  <mat-option value="^CFH">Font H</mat-option>
+                  <mat-option value="^CF0">0 (Scaleable)</mat-option>
+                  <!-- <mat-option value="^CFGS">GS (for symbols so ignored)</mat-option> -->
+                  <mat-option value="^CFP">Font P</mat-option>
+                  <mat-option value="^CFQ">Font Q</mat-option>
+                  <mat-option value="^CFR">Font R</mat-option>
+                  <mat-option value="^CFS">Font S</mat-option>
+                  <mat-option value="^CFT">Font T</mat-option>
+                  <mat-option value="^CFU">Font U</mat-option>
+                  <mat-option value="^CFV">Font V</mat-option>
                 </mat-select>
               </mat-form-field>
+              
               <mat-form-field class="preview-field" *ngIf="ZPLForm.controls.zplCodes.value[i].type == '^BQ,2'">
                   <mat-label>QR Code Magnification</mat-label>
                   <mat-select formControlName="textWeight">
@@ -105,9 +120,10 @@
                 </mat-form-field>
                 <mat-form-field class="preview-field" *ngIf="ZPLForm.controls.zplCodes.value[i].type == '^BXN'">
                   <mat-label>Magnification</mat-label>
-                  <mat-select formControlName="textWeight">
+                  <!-- <mat-select formControlName="textWeight">
                       <mat-option *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" value="{{i}}">{{i}}</mat-option>
-                  </mat-select>
+                  </mat-select> -->
+                  <input type="number" min="0" matInput formControlName="textWeight" placeholder="Error Correction / Quality Level" />
                 </mat-form-field>
               <mat-form-field class="preview-field" *ngIf="ZPLForm.controls.zplCodes.value[i].type == '^BXN'">
                   <mat-label>Error Correction / Quality Level</mat-label>
