@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
+// import * as BrowserPrint from 'BrowserPrint';
+//  import {} from 'browserprint'
+declare  let BrowserPrint:  any;
+
 
 @Component({
   selector: 'app-root',
@@ -38,13 +42,40 @@ export class AppComponent implements OnInit{
     private _sanitizer: DomSanitizer,
     private fb: FormBuilder
     ) {
-
   }
 
   ngOnInit() {
     this.ZPLForm = this.fb.group({
       zplCodes: new FormArray([])
-    })
+    });
+    console.log(BrowserPrint, "PPP")
+  }
+
+  testPrint() {
+    let self = this;
+    BrowserPrint.getDefaultDevice('printer', function(printer: any) {
+      printer.send(
+        self.zplCode
+      // `^XA
+      // ^LH0,0
+      // ^FO50,100
+      // ^BXN,5,200
+      // ^FDDhanukaTestPrint^FS
+      // ^CF0,30
+      // ^FO150,100^FDCOM: Dhanuka^FS
+      // ^FO150,130^FDMFG: 2010/12^FS
+      // ^FO150,160^FDExp:  2010/12^FS
+      // ^CF0,30
+      // ^FO540,100^FDCOM: Dhanuka^FS
+      // ^FO540,130^FDMFG: 2010/12^FS
+      // ^FO540,160^FDExp:  2010/12^FS
+      // ^FO400,70^BQ,2,5
+      // ^FDQA,DhanukaTestPrint^FS        
+      // ^XZ`
+      )
+    },function(error_response :any) {
+      console.log(error_response);
+    });
   }
 
   drop(event: any,x: any,y: any,index: any) {

@@ -189,7 +189,12 @@
             </div>
       </div>
       <div fxFlex>
-        <div *ngIf="blobSrc"><img id="label" [src]="blobSrc" /></div>
+        <div *ngIf="blobSrc">
+          <img id="label" [src]="blobSrc" />
+          <div fxLayout="row" fxLayoutAlign="end center">
+            <button mat-raised-button color="primary" (click)="testPrint();">Test Print</button>
+          </div>
+        </div>
         <div *ngIf="!blobSrc">Please click on Generate</div>
       </div>
     </div>
