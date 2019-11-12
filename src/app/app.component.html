@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">ZPL</mat-toolbar>
-<mat-tab-group  mat-stretch-tabs>
+<mat-tab-group  mat-stretch-tabs selectedIndex="2">
   <mat-tab label="Pre-Defined ZPL Templates">
     <div style="padding-top: 20px;padding-bottom: 20px;" fxLayout="row" fxLayoutAlign="space-around center">
       <div>
@@ -180,7 +180,7 @@
           <div fxLayout="column" fxLayoutAlign="space-around center">
               <div>
                 <mat-form-field class="custom-form-field">
-                    <textarea [(ngModel)]="zplCode" rows="20" cols="40" matInput placeholder="Generated ZPL code"></textarea>
+                    <textarea [(ngModel)]="zplCode" rows="20" cols="40" matInput placeholder="Generated ZPL code" disabled></textarea>
                 </mat-form-field>
               </div>
               <div>
@@ -190,9 +190,15 @@
       </div>
       <div fxFlex>
         <div *ngIf="blobSrc">
+          <div>
+            <mat-form-field>
+              <input matInput placeholder="Label / Format Name" [(ngModel)]="formatName" required/>
+            </mat-form-field>
+          </div>
           <img id="label" [src]="blobSrc" />
-          <div fxLayout="row" fxLayoutAlign="end center">
+          <div fxLayout="column" fxLayoutAlign="center center">
             <button mat-raised-button color="primary" (click)="testPrint();">Test Print</button>
+            <button style="margin-top: 20px;" mat-raised-button color="primary" (click)="saveZPLCode();">Save <mat-icon>save</mat-icon></button>
           </div>
         </div>
         <div *ngIf="!blobSrc">Please click on Generate</div>
@@ -317,4 +323,36 @@
       </div>
     </div>
   </mat-tab> -->
+  <mat-tab label="LinkFormat">
+    <div style="padding-top: 20px;">
+      <div fxLayout="row" fxLayoutAlign="space-around center">
+        <div>
+          <mat-form-field>
+              <mat-label>Select QR Code</mat-label>
+              <mat-select [(ngModel)]="selectedFormat">
+                <mat-option *ngFor="let qr of qrCodes" [value]="qr.id">
+                  {{qr.formatData ? qr.formatData.formatName : ''}}
+                  <!-- {{qr.formatData | json}} -->
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </div>
+        <div>
+          <!-- <pre>{{allSKU | json}}</pre> -->
+          <mat-form-field>
+              <mat-label>Select SKU</mat-label>
+              <mat-select [(ngModel)]="selectedSKU" multiple>
+                <mat-option *ngFor="let sku of allSKU" [value]="sku.id">
+                  {{sku.brandAndSku}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </div>
+      </div>
+      <div style="padding-top: 20px;" fxLayout="row" fxLayoutAlign="center center">
+        <button mat-raised-button color="primary" (click)="saveLinkSKUFormat();">Link SKU & Format</button>
+      </div>
+    </div>
+  </mat-tab>
 </mat-tab-group>
+<ngx-spinner></ngx-spinner>

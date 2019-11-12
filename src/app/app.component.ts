@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormControl, FormGroup, FormArray } from '@angular/forms';
-// import * as BrowserPrint from 'BrowserPrint';
-//  import {} from 'browserprint'
+import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerService } from "ngx-spinner";
+
+
 declare  let BrowserPrint:  any;
 
 
@@ -18,29 +20,38 @@ export class AppComponent implements OnInit{
   width: any = '4';
   height: any = '1';
   printDensity: any = '8';
-  zplCode: any = `
-  ^XA
-  ^CF0,30
-  ^FO20,60^FDMFG: Dhanuka^FS
-  ^FO20,100^FDITEM: 38102^FS
-  ^FO20,140^FDExp: 10/2020^FS
-  ^FO220,30^BQ,2,5
-  ^FDHA,123456Text^FS
-  ^CFA,20
-  ^FO220,180^FD123456Text^FS
-  ^XZ
+  // zplCode: any = `
+  // ^XA
+  // ^CF0,30
+  // ^FO20,60^FDMFG: Dhanuka^FS
+  // ^FO20,100^FDITEM: 38102^FS
+  // ^FO20,140^FDExp: 10/2020^FS
+  // ^FO220,30^BQ,2,5
+  // ^FDHA,123456Text^FS
+  // ^CFA,20
+  // ^FO220,180^FD123456Text^FS
+  // ^XZ
     
-  `;
+  // `;
+  zplCode: any = '';
   blobSrc: any;
   sampleBlobSrc: any;
   sampleDataObject: any = {};
   url = 'http://192.168.3.6:3000/generateLabel';
   ZPLForm: FormGroup;
   previewZpl: any;
+  apiEndPoint: any = `http://192.168.2.120:8080/`;
+  qrCodes: any = [];
+  formatName: any;
+  selectedFormat: any;
+  allSKU: any = [];
+  selectedSKU: any = [];
   
   constructor(
     private _sanitizer: DomSanitizer,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService,
+    private spinner: NgxSpinnerService
     ) {
   }
 
@@ -48,7 +59,103 @@ export class AppComponent implements OnInit{
     this.ZPLForm = this.fb.group({
       zplCodes: new FormArray([])
     });
-    console.log(BrowserPrint, "PPP")
+    console.log(BrowserPrint, "PPP");
+    this.getAllQRCodes();
+    this.getAllSKU();
+  }
+
+  async getAllQRCodes() {
+    this.spinner.show();
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/qrFormat/all', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json);
+      this.qrCodes = json.content;
+      this.spinner.hide();
+    } catch(error) {
+      this.toastr.error('Something went wrong!');
+      this.spinner.hide();
+      console.log(error)
+    }
+  }
+
+  async saveZPLCode() {
+    this.spinner.show();
+    try { 
+      let response = await fetch(this.apiEndPoint+'dal/qrFormat/create', {
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify({
+          formatData: {
+            zplCode: this.zplCode,
+            formatName: this.formatName
+          }
+        }), // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+      if(json.id) {
+        setTimeout(()=> {
+          this.spinner.hide();
+          this.getAllQRCodes();
+        },4000);
+        this.zplCode = '';
+        this.toastr.success('Created Successfully!');
+        this.ZPLForm.reset();
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async getAllSKU() {
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/dalBrandAndSku/all', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json);
+      this.allSKU = json.content;
+    }catch(error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async saveLinkSKUFormat() {
+    console.log(this.selectedFormat);
+    console.log('--------------');
+    console.log(this.selectedSKU);
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/dalBrandAndSku/linkFormat', {
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify({
+          dalBrandAndSkuIds: this.selectedSKU,
+          dalQRFormatId: this.selectedFormat
+        }), // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = response;
+      console.log(json, "PPP");
+        this.zplCode = '';
+        this.toastr.success('Prefrences Saved Successfully!');
+        this.selectedFormat = '';
+        this.selectedSKU = [];
+        // this.ZPLForm.reset();
+    } catch(error) {
+      console.log('Error:',error);
+    }
   }
 
   testPrint() {
@@ -56,22 +163,6 @@ export class AppComponent implements OnInit{
     BrowserPrint.getDefaultDevice('printer', function(printer: any) {
       printer.send(
         self.zplCode
-      // `^XA
-      // ^LH0,0
-      // ^FO50,100
-      // ^BXN,5,200
-      // ^FDDhanukaTestPrint^FS
-      // ^CF0,30
-      // ^FO150,100^FDCOM: Dhanuka^FS
-      // ^FO150,130^FDMFG: 2010/12^FS
-      // ^FO150,160^FDExp:  2010/12^FS
-      // ^CF0,30
-      // ^FO540,100^FDCOM: Dhanuka^FS
-      // ^FO540,130^FDMFG: 2010/12^FS
-      // ^FO540,160^FDExp:  2010/12^FS
-      // ^FO400,70^BQ,2,5
-      // ^FDQA,DhanukaTestPrint^FS        
-      // ^XZ`
       )
     },function(error_response :any) {
       console.log(error_response);
