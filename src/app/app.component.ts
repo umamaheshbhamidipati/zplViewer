@@ -195,39 +195,53 @@ export class AppComponent implements OnInit{
       let str = '^XA \n'
       if(this.sizeOfCode == 's') {
         for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          let z = this.zplArr[i];
           str += '\n'
           str += `^FX ----Start of ${i+1}---- \n`
-          str += `^FO35,25^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS  \n`
+          str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS  \n`
           str += `^FX ----End of ${i+1}---- \n`
           str += '\n'
         }
       }
       if(this.sizeOfCode == 'm') {
         for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          let z = this.zplArr[i];
           str += '\n'
           str += `^FX ---- Start of ${i+1} --- \n`
-          str += `^FO35,25^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS \n ^CFA,20 \n ^FO35,165^FD${this.zplArr[i].zplCode}^FS \n`
+          str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS \n ^CFA,20 \n ^FO35,165^FD${z.zplCode}^FS \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        }
+      }
+      if(this.sizeOfCode == 'm1') {
+        for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          let z = this.zplArr[i];
+          str += '\n'
+          str += `^FX ---- Start of ${i+1} --- \n`
+          str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS \n ^CFA,20 \n ^FO35,15^FD${z.zplCode}^FS \n`
           str += `^FX ----End of ${i+1}---- \n`
           str += '\n'
         }
       }
       if(this.sizeOfCode == 'l') {
         for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          let z = this.zplArr[i];
           str += '\n'
           str += `^FX ---- Start of ${i+1} --- \n`
           str += `^CF0,30 \n 
           ^FO0,30^FDMFG: Dhanuka^FS \n 
           ^FO0,60^FDITEM: 38102^FS \n 
           ^FO0,90^FDExp: 10/2020^FS \n 
-          ^FO200,0^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS \n
+          ^FO200,0^BQ,2,5^FDHA,${z.zplCode}^FS \n
           ^CFA,20 \n 
-          ^FO200,150^FD${this.zplArr[i].zplCode}^FS \n`
+          ^FO200,150^FD${z.zplCode}^FS \n`
           str += `^FX ----End of ${i+1}---- \n`
           str += '\n'
         }
       }
       if(this.sizeOfCode == 'l1') {
         for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          let z = this.zplArr[i];
           str += '\n'
           str += `^FX ---- Start of ${i+1} --- \n`
           str += `^CF0,30 \n 
@@ -235,8 +249,8 @@ export class AppComponent implements OnInit{
           ^FDMFG: Dhanuka^FS \n
           ^FO150,60^FDITEM: 38102^FS \n
           ^FO150,90^FDExp: 10/2020^FS \n
-          ^FO0,0^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS \n
-          ^CFA,20 \n^FO0,150^FD${this.zplArr[i].zplCode}^FS \n`
+          ^FO0,0^BQ,2,5^FDHA,${z.zplCode}^FS \n
+          ^CFA,20 \n^FO0,150^FD${z.zplCode}^FS \n`
           str += `^FX ----End of ${i+1}---- \n`
           str += '\n'
         }
