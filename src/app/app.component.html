@@ -7,7 +7,7 @@
           <mat-label>Select type of Code</mat-label>
           <mat-select [(ngModel)]="tpyeOfCode">
             <mat-option value="qrCode">QR Code</mat-option>
-            <mat-option value="barCode">Bar Code</mat-option>
+            <!-- <mat-option value="barCode">Bar Code</mat-option> -->
           </mat-select>
         </mat-form-field>
         <div *ngIf="tpyeOfCode == 'qrCode'">
@@ -31,19 +31,36 @@
         </div>
       </div>
     </div>
-    <div fxLayout="row" fxLayoutAlign="center center">
+    <hr/>
+    <div style="padding-top: 20px;" fxLayout="row" fxLayoutAlign="space-around center">
       <button mat-raised-button color="primary" (click)="createZPLFile();">Create ZPL File</button>
+      <button mat-raised-button color="primary" (click)="printZPL('');">Print ZPL</button>
     </div>
-    <div fxLayout="row" fxLayoutAlign="space-around center">
+    <div style="padding-top: 20px;" fxLayout="row" fxLayoutAlign="space-around center">
       <mat-form-field>
-        <input type="number" matInput #index placeholder="Number"/>
+        <input type="number" matInput #index placeholder="Start From"/>
       </mat-form-field>
       <button mat-raised-button color="primary" (click)="printFromSpecificIndex(index.value);">CreateZPLFromIndex</button>
+      <button mat-raised-button color="primary" (click)="printZPL(index.value);">Print ZPL From Index</button>
     </div>
-    <div fxLayout="row wrap" fxLayoutGap="1em">
+    <hr/>
+    <div style="padding-top: 20px;padding-bottom: 20px;" fxLayout="row wrap" fxLayoutGap="1em">
       <mat-chip-list *ngFor="let zp of zplArr">
         <mat-chip fxFlex="100">{{zp.zplCode}}</mat-chip>
       </mat-chip-list>
+    </div>
+    <hr/>
+    <div fxLayout="row" fxLayoutAlign="space-around center"> 
+      <div><p style="font-size: 20px;font-weight: bold;">Complete Offline System!</p></div>
+    </div>
+    <div style="padding-top: 20px;" fxLayout="row" fxLayoutAlign="space-around center">
+      <button mat-raised-button color="warn" (click)="file.click();">Upload ZPL  <mat-icon>cloud_upload</mat-icon></button>
+      <input style="display: none;visibility: hidden;" type="file" (change)="uploadZPL($event);" accept=".zpl" #file>
+      <button mat-raised-button color="primary" [disabled]="zplCode == ''" (click)="printZPLFormFile();">Print ZPL</button>
+      <button mat-raised-button color="primary" [disabled]="zplCode == ''" (click)="this.zplCode = ''">Delete <mat-icon>delete</mat-icon></button>
+    </div>
+    <div style="padding-top: 20px;" fxLayout="row" fxLayoutAlign="center center" *ngIf="zplCode">
+      <textarea [(ngModel)]="zplCode" rows="20" cols="200" placeholder="Read From Input ZPL File" matInput disabled></textarea>
     </div>
   </mat-tab>
   <mat-tab label="Customizable ZPL Templates">
@@ -72,8 +89,13 @@
                 </mat-form-field>
               </div>
         </div>
-        <div fxFlex></div>
+        <div fxFlex>
+          <p style="font-weight: bold;">Pre-Defined Fonts</p>
+          <img src="assets/fonts.png" width="300" height="300" />
+        </div>
       </div>
+      <hr/>
+      <mat-toolbar color="primary"> Create Format</mat-toolbar>
       <div style="padding-bottom: 20px;" fxLayout="row" fxLayoutAlign="end center">
           <button mat-raised-button color="primary" (click)="AddNewField();">click to Add <mat-icon>add</mat-icon></button>
       </div>

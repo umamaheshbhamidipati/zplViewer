@@ -42,7 +42,7 @@ export class AppComponent implements OnInit{
     private toastr: ToastrService,
     private spinner: NgxSpinnerService
     ) {
-      for(let i=0; i < 1000; i++) {
+      for(let i=0; i < 10; i++) {
         this.zplArr.push({
           'id': i+1,
           'zplCode': Math.random().toString(36).substring(2).toUpperCase()
@@ -58,55 +58,214 @@ export class AppComponent implements OnInit{
     // this.getAllQRCodes();
     // this.getAllSKU();
   }
+
+  uploadZPL(e : any) {
+    console.log(e);
+    let MyFile = e.target.files[0];
+    console.log(MyFile);
+    this.readFile(MyFile)
+  }
+
+  readFile(file: File) {
+    var reader = new FileReader();
+    reader.onload = () => {
+        // console.log(reader.result ,"PPP");
+        this.zplCode = reader.result;
+    };
+    reader.readAsText(file);
+  }
+
+  printZPLFormFile() {
+    let self = this;
+    BrowserPrint.getDefaultDevice('printer', function(printer: any) {
+      printer.send(
+        self.zplCode
+      )
+    },function(error_response :any) {
+      console.log(error_response);
+    });
+  }
+
+  printZPL(val: any) {
+    if(val) {
+      this.toastr.success(`Print starts from value ${val}!`)
+    }else {
+      this.toastr.success('Sends ZPL Code directly to printer for printing!')
+    }
+  }
   
   createZPLFile() {
     console.log(this.zplArr, "My Array!");
     // ^FX Second section with recipient address and permit information.
-
-    let str = '^XA \n'
-    this.zplArr.map((z: any,i: any)=> {
-      str += '\n'
-      str += `^FX ----Start of ${i+1}---- \n`
-      str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS  \n`
-      str += `^FX ----End of ${i+1}---- \n`
-      str += '\n'
-    })
-    str +='^XZ'
-    console.log(str);
-    // var fileName = 'Dhanuka zplFile '+new Date().toString();;
-    // var type = 'zpl';
-    // var data = str;
-    // var file = new Blob([data], {
-    // type: type
-    // });
-    // if (window.navigator.msSaveOrOpenBlob) // IE10+
-    //   window.navigator.msSaveOrOpenBlob(file, fileName);
-    // else { // Others
-    //   var a = document.createElement("a"),
-    //   url = URL.createObjectURL(file);
-    //   a.href = url;
-    //   a.download = fileName + '.' +type;
-    //   document.body.appendChild(a);
-    //   a.click();
-    //   setTimeout(function() {
-    //   document.body.removeChild(a);
-    //   window.URL.revokeObjectURL(url);
-    //   }, 100);
-    // }
+    console.log(this.sizeOfCode, "PPP");
+    if(this.sizeOfCode != '') {
+      let str = '^XA \n'
+      if(this.sizeOfCode == 's') {
+        this.zplArr.map((z: any,i: any)=> {
+          str += '\n'
+          str += `^FX ----Start of ${i+1}---- \n`
+          str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS  \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        })
+      }
+      if(this.sizeOfCode == 'm') {
+        this.zplArr.map((z: any, i: any) => {
+          str += '\n'
+          str += `^FX ---- Start of ${i+1} --- \n`
+          str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS \n ^CFA,20 \n ^FO35,165^FD${z.zplCode}^FS \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        })
+      }
+      if(this.sizeOfCode == 'm1') {
+        this.zplArr.map((z: any, i: any) => {
+          str += '\n'
+          str += `^FX ---- Start of ${i+1} --- \n`
+          str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS \n ^CFA,20 \n ^FO35,15^FD${z.zplCode}^FS \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        })
+      }
+  
+      if(this.sizeOfCode == 'l') {
+        this.zplArr.map((z: any, i: any) => {
+          str += '\n'
+          str += `^FX ---- Start of ${i+1} --- \n`
+          str += `^CF0,30 \n 
+                  ^FO0,30^FDMFG: Dhanuka^FS \n 
+                  ^FO0,60^FDITEM: 38102^FS \n 
+                  ^FO0,90^FDExp: 10/2020^FS \n 
+                  ^FO200,0^BQ,2,5^FDHA,${z.zplCode}^FS \n
+                  ^CFA,20 \n 
+                  ^FO200,150^FD${z.zplCode}^FS \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        })
+      }
+  
+      if(this.sizeOfCode == 'l1') {
+        this.zplArr.map((z: any, i: any) => {
+          str += '\n'
+          str += `^FX ---- Start of ${i+1} --- \n`
+          str += `^CF0,30 \n 
+                  ^FO150,30 \n
+                  ^FDMFG: Dhanuka^FS \n
+                  ^FO150,60^FDITEM: 38102^FS \n
+                  ^FO150,90^FDExp: 10/2020^FS \n
+                  ^FO0,0^BQ,2,5^FDHA,${z.zplCode}^FS \n
+                  ^CFA,20 \n^FO0,150^FD${z.zplCode}^FS \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        })
+      }
+      str +='^XZ'
+      
+      console.log(str);
+      
+      var fileName = 'Dhanuka zplFile '+new Date().toString();;
+      var type = 'zpl';
+      var data = str;
+      var file = new Blob([data], {
+      type: type
+      });
+      if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, fileName);
+      else { // Others
+        var a = document.createElement("a"),
+        url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = fileName + '.' +type;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        }, 100);
+      }
+    }else {
+      this.toastr.warning('Please select Format!')
+    }
+    
   }
 
   printFromSpecificIndex(val: any) {
-    console.log(val); 
-    let str = '^XA \n'
-    for(let i = Number(val)-1; i < this.zplArr.length; i++) {
-      str += '\n'
-      str += `^FX ----Start of ${i+1}---- \n`
-      str += `^FO35,25^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS  \n`
-      str += `^FX ----End of ${i+1}---- \n`
-      str += '\n'
-    }
-    str +='^XZ'
-    console.log(str);  
+    console.log(val);
+    if(this.sizeOfCode != '' && val) {
+      let str = '^XA \n'
+      if(this.sizeOfCode == 's') {
+        for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          str += '\n'
+          str += `^FX ----Start of ${i+1}---- \n`
+          str += `^FO35,25^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS  \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        }
+      }
+      if(this.sizeOfCode == 'm') {
+        for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          str += '\n'
+          str += `^FX ---- Start of ${i+1} --- \n`
+          str += `^FO35,25^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS \n ^CFA,20 \n ^FO35,165^FD${this.zplArr[i].zplCode}^FS \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        }
+      }
+      if(this.sizeOfCode == 'l') {
+        for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          str += '\n'
+          str += `^FX ---- Start of ${i+1} --- \n`
+          str += `^CF0,30 \n 
+          ^FO0,30^FDMFG: Dhanuka^FS \n 
+          ^FO0,60^FDITEM: 38102^FS \n 
+          ^FO0,90^FDExp: 10/2020^FS \n 
+          ^FO200,0^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS \n
+          ^CFA,20 \n 
+          ^FO200,150^FD${this.zplArr[i].zplCode}^FS \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        }
+      }
+      if(this.sizeOfCode == 'l1') {
+        for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+          str += '\n'
+          str += `^FX ---- Start of ${i+1} --- \n`
+          str += `^CF0,30 \n 
+          ^FO150,30 \n
+          ^FDMFG: Dhanuka^FS \n
+          ^FO150,60^FDITEM: 38102^FS \n
+          ^FO150,90^FDExp: 10/2020^FS \n
+          ^FO0,0^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS \n
+          ^CFA,20 \n^FO0,150^FD${this.zplArr[i].zplCode}^FS \n`
+          str += `^FX ----End of ${i+1}---- \n`
+          str += '\n'
+        }
+      }
+      str +='^XZ'
+      console.log(str);
+      var fileName = `Dhanuka specific Index ${val} zplFile `+new Date().toString();;
+      var type = 'zpl';
+      var data = str;
+      var file = new Blob([data], {
+      type: type
+      });
+      if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, fileName);
+      else { // Others
+        var a = document.createElement("a"),
+        url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = fileName + '.' +type;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        }, 100);
+      }  
+    }else {
+      this.toastr.warning('Please enter the number to start or Please select Format')
+    } 
   }
 
   async getAllQRCodes() {
@@ -219,7 +378,6 @@ export class AppComponent implements OnInit{
     console.log('x: '+(event.distance.x+Number(x)),'y: '+(event.distance.y+Number(y)));
     let zplCodes = this.ZPLForm.controls.zplCodes.value;
     zplCodes.map((z: any,i: any)=> {
-      // console.log(this.ZPLForm.controls.zplCodes.value[i])
       if(index == i) {
         z.x = (event.distance.x+Number(x)).toString();
         z.y = (event.distance.y+Number(y)).toString();
