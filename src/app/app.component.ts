@@ -20,19 +20,6 @@ export class AppComponent implements OnInit{
   width: any = '4';
   height: any = '1';
   printDensity: any = '8';
-  // zplCode: any = `
-  // ^XA
-  // ^CF0,30
-  // ^FO20,60^FDMFG: Dhanuka^FS
-  // ^FO20,100^FDITEM: 38102^FS
-  // ^FO20,140^FDExp: 10/2020^FS
-  // ^FO220,30^BQ,2,5
-  // ^FDHA,123456Text^FS
-  // ^CFA,20
-  // ^FO220,180^FD123456Text^FS
-  // ^XZ
-    
-  // `;
   zplCode: any = '';
   blobSrc: any;
   sampleBlobSrc: any;
@@ -46,6 +33,8 @@ export class AppComponent implements OnInit{
   selectedFormat: any;
   allSKU: any = [];
   selectedSKU: any = [];
+
+  zplArr: any = [];
   
   constructor(
     private _sanitizer: DomSanitizer,
@@ -53,6 +42,12 @@ export class AppComponent implements OnInit{
     private toastr: ToastrService,
     private spinner: NgxSpinnerService
     ) {
+      for(let i=0; i < 1000; i++) {
+        this.zplArr.push({
+          'id': i+1,
+          'zplCode': Math.random().toString(36).substring(2).toUpperCase()
+        })
+      }
   }
 
   ngOnInit() {
@@ -60,8 +55,58 @@ export class AppComponent implements OnInit{
       zplCodes: new FormArray([])
     });
     console.log(BrowserPrint, "PPP");
-    this.getAllQRCodes();
-    this.getAllSKU();
+    // this.getAllQRCodes();
+    // this.getAllSKU();
+  }
+  
+  createZPLFile() {
+    console.log(this.zplArr, "My Array!");
+    // ^FX Second section with recipient address and permit information.
+
+    let str = '^XA \n'
+    this.zplArr.map((z: any,i: any)=> {
+      str += '\n'
+      str += `^FX ----Start of ${i+1}---- \n`
+      str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS  \n`
+      str += `^FX ----End of ${i+1}---- \n`
+      str += '\n'
+    })
+    str +='^XZ'
+    console.log(str);
+    // var fileName = 'Dhanuka zplFile '+new Date().toString();;
+    // var type = 'zpl';
+    // var data = str;
+    // var file = new Blob([data], {
+    // type: type
+    // });
+    // if (window.navigator.msSaveOrOpenBlob) // IE10+
+    //   window.navigator.msSaveOrOpenBlob(file, fileName);
+    // else { // Others
+    //   var a = document.createElement("a"),
+    //   url = URL.createObjectURL(file);
+    //   a.href = url;
+    //   a.download = fileName + '.' +type;
+    //   document.body.appendChild(a);
+    //   a.click();
+    //   setTimeout(function() {
+    //   document.body.removeChild(a);
+    //   window.URL.revokeObjectURL(url);
+    //   }, 100);
+    // }
+  }
+
+  printFromSpecificIndex(val: any) {
+    console.log(val); 
+    let str = '^XA \n'
+    for(let i = Number(val)-1; i < this.zplArr.length; i++) {
+      str += '\n'
+      str += `^FX ----Start of ${i+1}---- \n`
+      str += `^FO35,25^BQ,2,5^FDHA,${this.zplArr[i].zplCode}^FS  \n`
+      str += `^FX ----End of ${i+1}---- \n`
+      str += '\n'
+    }
+    str +='^XZ'
+    console.log(str);  
   }
 
   async getAllQRCodes() {

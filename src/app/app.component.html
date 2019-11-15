@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">ZPL</mat-toolbar>
-<mat-tab-group  mat-stretch-tabs selectedIndex="2">
+<mat-tab-group  mat-stretch-tabs selectedIndex="0">
   <mat-tab label="Pre-Defined ZPL Templates">
     <div style="padding-top: 20px;padding-bottom: 20px;" fxLayout="row" fxLayoutAlign="space-around center">
       <div>
@@ -30,6 +30,20 @@
           </div>
         </div>
       </div>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <button mat-raised-button color="primary" (click)="createZPLFile();">Create ZPL File</button>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="space-around center">
+      <mat-form-field>
+        <input type="number" matInput #index placeholder="Number"/>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="printFromSpecificIndex(index.value);">CreateZPLFromIndex</button>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="1em">
+      <mat-chip-list *ngFor="let zp of zplArr">
+        <mat-chip fxFlex="100">{{zp.zplCode}}</mat-chip>
+      </mat-chip-list>
     </div>
   </mat-tab>
   <mat-tab label="Customizable ZPL Templates">
