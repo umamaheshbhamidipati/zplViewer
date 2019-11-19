@@ -27,12 +27,22 @@ export class AppComponent implements OnInit{
   url = 'http://192.168.3.6:3000/generateLabel';
   ZPLForm: FormGroup;
   previewZpl: any;
-  apiEndPoint: any = `http://192.168.2.120:8080/`;
+  apiEndPoint: any = `http://172.24.2.80:8086/`;
   qrCodes: any = [];
   formatName: any;
   selectedFormat: any;
   allSKU: any = [];
   selectedSKU: any = [];
+  dalBrandSKU: any = [];
+  levels: any = [];
+  versions: any = [];
+  dalEncryptions: any = [];
+
+  brandSKU: any;
+  level: any;
+  version: any;
+  dalEncryption: any;
+
 
   zplArr: any = [];
   
@@ -42,12 +52,12 @@ export class AppComponent implements OnInit{
     private toastr: ToastrService,
     private spinner: NgxSpinnerService
     ) {
-      for(let i=0; i < 10; i++) {
-        this.zplArr.push({
-          'id': i+1,
-          'zplCode': Math.random().toString(36).substring(2).toUpperCase()
-        })
-      }
+      // for(let i=0; i < 10; i++) {
+      //   this.zplArr.push({
+      //     'id': i+1,
+      //     'zplCode': Math.random().toString(36).substring(2).toUpperCase()
+      //   })
+      // }
   }
 
   ngOnInit() {
@@ -57,6 +67,74 @@ export class AppComponent implements OnInit{
     console.log(BrowserPrint, "PPP");
     // this.getAllQRCodes();
     // this.getAllSKU();
+    this.getDalBrandSKU();
+    this.getLevels();
+    this.getVersions();
+    this.getDalEncryptions();
+  }
+
+  async getDalBrandSKU() {
+    try { 
+      let response = await fetch(this.apiEndPoint+'dal/dalBrandAndSku/all', {
+        method: 'GET', // or 'PUT'
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json.content, "PPP");
+      this.dalBrandSKU = json.content;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async getLevels() {
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/levelVersion/levels', {
+        method: 'GET',
+        headers: {
+          'Content-Type' : 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+      this.levels = json;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async getVersions() {
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/levelVersion/versions', {
+        method: 'GET',
+        headers: {
+          'Content-Type' : 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+      this.versions = json
+    }catch(error) {
+      console.log('Error:', error);
+    }
+  }
+
+  async getDalEncryptions() {
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/dalEncryption/all', {
+        method: 'GET',
+        headers: {
+          'Content-Type' : 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+      this.dalEncryptions = json
+    }catch(error) {
+      console.log('Error:', error);
+    }
   }
 
   uploadZPL(e : any) {
