@@ -43,6 +43,8 @@ export class AppComponent implements OnInit{
   version: any;
   dalEncryption: any;
 
+  dynamicForm: FormGroup;
+
 
   zplArr: any = [];
   
@@ -64,13 +66,63 @@ export class AppComponent implements OnInit{
     this.ZPLForm = this.fb.group({
       zplCodes: new FormArray([])
     });
-    console.log(BrowserPrint, "PPP");
+    this.dynamicForm = this.fb.group({
+      labels: new FormArray([])
+    })
+    // console.log(BrowserPrint, "PPP");
     // this.getAllQRCodes();
     // this.getAllSKU();
-    this.getDalBrandSKU();
-    this.getLevels();
-    this.getVersions();
-    this.getDalEncryptions();
+
+
+    // this.getDalBrandSKU();
+    // this.getLevels();
+    // this.getVersions();
+    // this.getDalEncryptions();
+
+
+  }
+
+  // get f() { return this.dynamicForm.controls; }
+  // get t() { return this.f.labels as FormArray; }
+
+  get zpl() {
+    return this.ZPLForm.controls;
+  }
+
+  get codes() {
+    return this.zpl.zplCodes as FormArray;
+  }
+
+  // AddNewField() {
+  //   this.codes.push(this.fb.group({
+  //     textWeight: [],
+  //     size: [],
+  //     x: ['20'],
+  //     y:['20'],
+  //     type: ['^FD'],
+  //     text: [],
+  //     length: ['30'],
+  //     breadth: ['50']
+  //   }));
+  // }
+
+  onChangelabels(e : any) {
+    console.log(e.value);
+    let noOfLabels = Number(e.value) || 0;
+    if(this.codes.length < noOfLabels) {
+      for(let i = this.codes.length; i < noOfLabels; i++) {
+        this.codes.push(this.fb.group({
+          textWeight: [],
+          size: [],
+          x: ['20'],
+          y:['20'],
+          type: ['^FD'],
+          text: [],
+          length: ['30'],
+          breadth: ['50']
+        }))
+      }
+    }
   }
 
   async getDalBrandSKU() {
@@ -495,26 +547,26 @@ export class AppComponent implements OnInit{
     return { top: y, left: x };
   }
 
-  get zpl() {
-    return this.ZPLForm.controls;
-  }
+  // get zpl() {
+  //   return this.ZPLForm.controls;
+  // }
 
-  get codes() {
-    return this.zpl.zplCodes as FormArray;
-  }
+  // get codes() {
+  //   return this.zpl.zplCodes as FormArray;
+  // }
 
-  AddNewField() {
-    this.codes.push(this.fb.group({
-      textWeight: [],
-      size: [],
-      x: ['20'],
-      y:['20'],
-      type: ['^FD'],
-      text: [],
-      length: ['30'],
-      breadth: ['50']
-    }));
-  }
+  // AddNewField() {
+  //   this.codes.push(this.fb.group({
+  //     textWeight: [],
+  //     size: [],
+  //     x: ['20'],
+  //     y:['20'],
+  //     type: ['^FD'],
+  //     text: [],
+  //     length: ['30'],
+  //     breadth: ['50']
+  //   }));
+  // }
 
   DeleteField(i: any) {
     console.log(i);

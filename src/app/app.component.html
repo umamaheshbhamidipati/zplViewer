@@ -1,5 +1,6 @@
+<div style="display: none;visibility: hidden;">
 <mat-toolbar color="primary">ZPL</mat-toolbar>
-<mat-tab-group  mat-stretch-tabs selectedIndex="0">
+<mat-tab-group  mat-stretch-tabs selectedIndex="1">
   <mat-tab label="Pre-Defined ZPL Templates">
     <div style="padding-top: 20px;padding-bottom: 20px;" fxLayout="row" fxLayoutAlign="space-around center">
       <div>
@@ -264,20 +265,21 @@
           <button style="margin-top: 20px;" *ngIf="ZPLForm.controls.zplCodes.length> 0" mat-raised-button color="primary" (click)="callApi();">Generate</button>
         </form>
     </div>
-    
-    <div style="visibility: hidden;display: none !important;">
-      <p>Drag & Drop...</p>
-      <div class="example-boundary" [ngStyle]="{'height' : height+'in', 'width' : width+'in'}">
-        <!-- <div class="example-box" (cdkDragEnded)="drop($event)" cdkDragBoundary=".example-boundary" cdkDrag [style.top.px]="initialPosition.y"
-        [style.left.px]="initialPosition.x"></div> -->
-        <div *ngFor="let x of ZPLForm.controls.zplCodes.value;let i = index" class="example-box" (cdkDragEnded)="drop($event,x.x,x.y,i)" [style.top.px]="x.y"
-        [style.left.px]="x.x"  cdkDragBoundary=".example-boundary" cdkDrag>
-          <div *ngIf="x.type == '^FD'">{{x.text}}</div>
-          <div *ngIf="x.type == '^BQ,2'">QR Code</div>
-        </div>
-      </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label>No. Of labels</mat-label>
+        <mat-select (selectionChange)="onChangelabels($event);">
+          <mat-option *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" value="{{i}}">{{i}}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    
+    <div>
+      <form>
+
+      </form>
+    </div>
+        
     <div fxLayout="row">
       <div fxFlex>
           <div fxLayout="column" fxLayoutAlign="space-around center">
@@ -308,124 +310,6 @@
       </div>
     </div>
   </mat-tab>
-  <!-- <mat-tab label="Drag">
-    <div style="padding-top: 20px;">
-      <div fxLayout="row">
-        <div fxFlex fxLayout="column" fxLayoutAlign="space-around center">
-            <div>
-                <mat-form-field class="custom-form-field">
-                  <input matInput [(ngModel)]="width" placeholder="Width(inches)*" />
-                </mat-form-field>
-              </div>
-              <div>
-                <mat-form-field class="custom-form-field">
-                  <input matInput [(ngModel)]="height" placeholder="Height(inches)*" />
-                </mat-form-field>
-              </div>
-              <div>
-                <mat-form-field class="custom-form-field">
-                  <mat-label>Print Density</mat-label>
-                  <mat-select [(ngModel)]="printDensity">
-                    <mat-option value="6">6dpmm (152 dpi)</mat-option>
-                    <mat-option value="8">8dpmm (203 dpi)</mat-option>
-                    <mat-option value="12">12dpmm (300 dpi)</mat-option>
-                    <mat-option value="24">24dpmm (600 dpi)</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-        </div>
-        <div fxFlex></div>
-      </div>
-      <div style="padding-bottom: 20px;" fxLayout="row" fxLayoutAlign="end center">
-          <button mat-raised-button color="primary" (click)="AddNewField();">click to Add <mat-icon>add</mat-icon></button>
-      </div>
-        <form [formGroup]="ZPLForm" (submit)="generateZpl();">
-          <div formArrayName="zplCodes">
-            <div *ngFor="let zpl of codes.controls; let i = index" [formGroupName]="i">
-              <div fxLayout="row" fxLayoutAlign="space-around center">
-              <mat-form-field class="preview-field">
-                <mat-label>Type</mat-label>
-                <mat-select formControlName="type">
-                  <mat-option value="^FD">Text</mat-option>
-                  <mat-option value="^BQ,2">QR Code</mat-option>
-                  <mat-option value="barCode">Bar Code</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field class="preview-field" *ngIf="ZPLForm.controls.zplCodes.value[i].type == '^FD'">
-                <mat-label>Text Weight (Bold/Light)</mat-label>
-                <mat-select formControlName="textWeight">
-                  <mat-option value="^CFA">Lighter</mat-option>
-                  <mat-option value="^CF0">Bolder</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field class="preview-field" *ngIf="ZPLForm.controls.zplCodes.value[i].type == '^BQ,2'">
-                  <mat-label>QR Code Magnification</mat-label>
-                  <mat-select formControlName="textWeight">
-                      <mat-option *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" value="{{i}}">{{i}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              <mat-form-field class="preview-field" *ngIf="ZPLForm.controls.zplCodes.value[i].type == '^FD'">
-                <mat-label>Size</mat-label>
-                <mat-select formControlName="size">
-                    <mat-option *ngFor="let i of [10,20,30,40,50,60,70,80,90,100]" value="{{i}}">{{i}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field class="preview-field" *ngIf="ZPLForm.controls.zplCodes.value[i].type == '^BQ,2'">
-                  <mat-label>Error Correction</mat-label>
-                  <mat-select formControlName="size">
-                      <mat-option *ngFor="let i of ['H','Q','M','L']" value="{{i}}">{{i}}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              <mat-form-field class="preview-field">
-                <input type="number" min="0" matInput formControlName="x" placeholder="X (Postion)" />
-              </mat-form-field>
-              <mat-form-field class="preview-field">
-                <input type="number" min="0" matInput formControlName="y" placeholder="Y (Postion)" />
-              </mat-form-field>
-              <mat-form-field class="preview-field">
-                <input type="text" matInput formControlName="text" placeholder="Text" />
-              </mat-form-field>
-              <button mat-button color="warn" (click)="DeleteField(i);">Delete <mat-icon>delete</mat-icon></button>
-            </div>
-            </div>
-          </div>
-          <button type="submit" *ngIf="ZPLForm.controls.zplCodes.length> 0" mat-raised-button color="primary" fxLayoutAlign="center">Generate ZPL</button>
-          <button style="margin-top: 20px;" *ngIf="ZPLForm.controls.zplCodes.length> 0" mat-raised-button color="primary" (click)="callApi();">Generate</button>
-        </form>
-    </div>
-    
-    <div>
-      <p>Drag & Drop...</p>
-      <div class="example-boundary" [ngStyle]="{'height' : height+'in', 'width' : width+'in'}">
-        <div *ngFor="let x of ZPLForm.controls.zplCodes.value;let i = index" [style.top.px]="x.y"
-        [style.left.px]="x.x" class="example-box" (cdkDragEnded)="drop($event,x.x,x.y,i)"   cdkDragBoundary=".example-boundary" cdkDrag>
-          <div>
-            <span *ngIf="x.type == '^FD'" >{{x.text}}</span>
-            <span *ngIf="x.type == '^BQ,2'">QR Code</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div fxLayout="row">
-      <div fxFlex>
-          <div fxLayout="column" fxLayoutAlign="space-around center">
-              <div>
-                <mat-form-field class="custom-form-field">
-                    <textarea [(ngModel)]="zplCode" rows="20" cols="40" matInput placeholder="Generated ZPL code"></textarea>
-                </mat-form-field>
-              </div>
-              <div>
-                <button mat-raised-button color="primary" (click)="callApi();">Generate</button>
-              </div>
-            </div>
-      </div>
-      <div fxFlex>
-        <div *ngIf="blobSrc"><img style="border: 1px solid darkgray;" [ngStyle]="{'height' : height+'in', 'width' : width+'in'}"  [src]="blobSrc" /></div>
-        <div *ngIf="!blobSrc">Please click on Generate</div>
-      </div>
-    </div>
-  </mat-tab> -->
   <mat-tab label="LinkFormat">
     <div style="padding-top: 20px;">
       <div fxLayout="row" fxLayoutAlign="space-around center">
@@ -459,3 +343,5 @@
   </mat-tab>
 </mat-tab-group>
 <ngx-spinner></ngx-spinner>
+</div>
+<router-outlet></router-outlet>

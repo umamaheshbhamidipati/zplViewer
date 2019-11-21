@@ -13,11 +13,13 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from "ngx-spinner";
+import { NestedFormComponent } from './components/nested-form/nested-form.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NestedFormComponent
   ],
   imports: [
     BrowserModule,

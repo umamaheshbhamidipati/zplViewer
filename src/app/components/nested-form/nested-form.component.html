@@ -1,0 +1,133 @@
+<p>nested-form works!</p>
+<div style="margin-left: 20px;">
+    <div fxLayout="column" fxLayoutAlign="start">
+        <div>
+            <mat-form-field class="custom-form-field">
+                <input matInput [(ngModel)]="width" placeholder="Width(inches)*" />
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field class="custom-form-field">
+                <input matInput [(ngModel)]="height" placeholder="Height(inches)*" />
+            </mat-form-field>
+        </div>
+        <div>
+            <p>Print Density* : {{printDensity}}dpmm</p>
+        </div>
+    </div>
+            
+    <mat-form-field>
+        <mat-label>No. Of labels In a row</mat-label>
+        <mat-select (selectionChange)="onChangelabels($event);">
+            <mat-option *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" value="{{i}}">{{i}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+        <button mat-raised-button color="primary" (click)="AddNew();">Click to Add <mat-icon>add</mat-icon></button>
+    </div>
+
+    <div *ngFor="let x of myArr;let i = index; let first = first; let last = last" [class.first-item]="first"
+    [class.last-item]="last">
+        <mat-toolbar class="label-toolbar">Label {{i+1}}</mat-toolbar>
+        <div *ngFor="let c of x.Codes;let j = index" style="padding: 20px 0;">
+            <div fxLayout="row" fxLayoutAlign="space-around center">
+            <mat-form-field class="preview-field">
+                <mat-label>Type</mat-label>
+                <mat-select [(ngModel)]="c.type">
+                    <mat-option value="^FD">Text</mat-option>
+                    <mat-option value="^BQ,2">QR Code</mat-option>
+                    <mat-option value="^BXN">Data Matrix</mat-option>
+                    <mat-option value="^GB">Border</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^FD'">
+                <mat-label>Font Family / Weights</mat-label>
+                <mat-select [(ngModel)]="c.textWeight">
+                    <mat-option value="^CFA">Font A (Lighter)</mat-option>
+                    <mat-option value="^CFB">Font B</mat-option>
+                    <mat-option value="^CFD">Font D</mat-option>
+                    <mat-option value="^CFE">Font E</mat-option>
+                    <mat-option value="^CFF">Font F</mat-option>
+                    <mat-option value="^CFG">Font G</mat-option>
+                    <mat-option value="^CFH">Font H</mat-option>
+                    <mat-option value="^CF0">0 (Scaleable)</mat-option>
+                    <!-- <mat-option value="^CFGS">GS (for symbols so ignored)</mat-option> -->
+                    <mat-option value="^CFP">Font P</mat-option>
+                    <mat-option value="^CFQ">Font Q</mat-option>
+                    <mat-option value="^CFR">Font R</mat-option>
+                    <mat-option value="^CFS">Font S</mat-option>
+                    <mat-option value="^CFT">Font T</mat-option>
+                    <mat-option value="^CFU">Font U</mat-option>
+                    <mat-option value="^CFV">Font V</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^FD'">
+                <mat-label>Text Orientation</mat-label>
+                <mat-select [(ngModel)]="c.textOrientation">
+                    <mat-option value="^FWN">Normal (0&#176;)</mat-option>
+                    <mat-option value="^FWR">Reverse (90&#176;)</mat-option>
+                    <mat-option value="^FWI">Inverted (180&#176;)</mat-option>
+                    <mat-option value="^FWB">Read From bottom (270&#176;)</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^BQ,2'">
+                <mat-label>QR Code Magnification</mat-label>
+                <mat-select [(ngModel)]="c.textWeight">
+                    <mat-option *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" value="{{i}}">{{i}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^FD'">
+                <mat-label>Size</mat-label>
+                <mat-select [(ngModel)]="c.size">
+                    <mat-option *ngFor="let i of [10,20,30,40,50,60,70,80,90,100]" value="{{i}}">{{i}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^BQ,2'">
+                <mat-label>Error Correction</mat-label>
+                <mat-select [(ngModel)]="c.size">
+                    <mat-option *ngFor="let i of ['H','Q','M','L']" value="{{i}}">{{i}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^BXN'">
+                <mat-label>Magnification</mat-label>
+                <input type="number" min="0" matInput [(ngModel)]="c.textWeight" placeholder="Error Correction / Quality Level" />
+            </mat-form-field>
+            <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^BXN'">
+                <mat-label>Error Correction / Quality Level</mat-label>
+                <mat-select [(ngModel)]="c.size">
+                    <mat-option *ngFor="let i of [200]" value="{{i}}">{{i}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="preview-field">
+            <input type="number" min="0" matInput [(ngModel)]="c.x" placeholder="X (Postion)" />
+            </mat-form-field>
+                <mat-form-field class="preview-field">
+                    <input type="number" min="0" matInput [(ngModel)]="c.y" placeholder="Y (Postion)" />
+                </mat-form-field>
+                <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^GB'">
+                    <input type="number" min="0" matInput [(ngModel)]="c.length" placeholder="Length" />
+                </mat-form-field>
+                <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^GB'">
+                    <input type="number" min="0" matInput [(ngModel)]="c.breadth" placeholder="Breadth" />
+                </mat-form-field>
+                <mat-form-field class="preview-field" *ngIf="x.Codes[j].type == '^GB'">
+                    <mat-label>Thickness</mat-label>
+                    <mat-select [(ngModel)]="c.textWeight">
+                        <mat-option *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" value="{{i}}">{{i}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="preview-field" *ngIf="x.Codes[j].type != '^GB'">
+                    <input type="text" matInput [(ngModel)]="c.text" placeholder="Text" />
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding-top: 20px;" fxLayout="row" fxLayoutAlign="center center">
+        <button mat-raised-button color="primary" (click)="generateZpl();">Generate & Preview</button>
+    </div>
+
+    <div style="width: 100%;margin: auto; padding-bottom: 40px;" *ngIf="blobSrc">
+        <img id="label" [src]="blobSrc" />
+    </div>
+</div>
