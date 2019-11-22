@@ -1,4 +1,4 @@
-<p>nested-form works!</p>
+<p>Label Format Creation</p>
 <div style="margin-left: 20px;">
     <div fxLayout="column" fxLayoutAlign="start">
         <div>
@@ -130,4 +130,126 @@
     <div style="width: 100%;margin: auto; padding-bottom: 40px;" *ngIf="blobSrc">
         <img id="label" [src]="blobSrc" />
     </div>
+    <div>
+        <div *ngIf="blobSrc">
+          <div>
+            <mat-form-field>
+              <input matInput placeholder="Label / Format Name" [(ngModel)]="formatName" required/>
+            </mat-form-field>
+          </div>
+          <div fxLayout="column" fxLayoutAlign="center center">
+            <button mat-raised-button color="primary" (click)="testPrint();">Test Print</button>
+            <button style="margin-top: 20px;" mat-raised-button color="primary" (click)="saveZPLCode();">Save <mat-icon>save</mat-icon></button>
+          </div>
+        </div>
+        <!-- <div *ngIf="!blobSrc">Please click on Generate</div> -->
+      </div>
 </div>
+
+
+<hr />
+
+<div fxLayout="row" fxLayoutAlign="space-around center">
+    <div>
+      <mat-form-field class="custom-form-field">
+        <mat-label>Dal Brand & SKU Id:</mat-label>
+        <mat-select [(ngModel)]="brandSKU">
+          <mat-option *ngFor="let dal of dalBrandSKU" [value]="dal.id">{{dal.brandAndSku}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="custom-form-field">
+            <mat-label>Level:</mat-label>
+            <mat-select [(ngModel)]="level">
+              <mat-option *ngFor="let lvl of levels" [value]="lvl._id">{{lvl._id}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="custom-form-field">
+            <mat-label>Version:</mat-label>
+            <mat-select [(ngModel)]="version">
+              <mat-option *ngFor="let ver of versions" [value]="ver._id">{{ver._id}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="custom-form-field">
+            <mat-label>Dal Encryption:</mat-label>
+            <mat-select [(ngModel)]="dalEncryption">
+              <mat-option *ngFor="let dal of dalEncryptions" [value]="dal.id">{{dal.encryptionName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+    </div>
+  </div>
+
+  <div style="margin: 0 10px" fxLayout="row" fxLayoutAlign="space-between center">
+    <div>
+      <mat-form-field>
+        <input matInput placeholder="Carrying Capacity"/>
+      </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field>
+            <input matInput placeholder="Batch"/>
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field>
+            <input matInput placeholder="MFD"/>
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field >
+            <input matInput placeholder="Expiry"/>
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field >
+            <input matInput placeholder="No. of Codes"/>
+          </mat-form-field>
+    </div>
+  </div>
+  <div style="padding-top: 20px;" fxLayoutAlign="center">
+    <button mat-raised-button color="primary">Generate QR Code</button>
+  </div>
+
+  <hr/>
+
+  <div style="margin: 0 20px;" fxLayout="row" fxLayoutAlign="space-between center">
+    <div>
+        <mat-form-field>
+            <input matInput placeholder="Batch"/>
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="custom-form-field">
+            <mat-label>Level:</mat-label>
+            <mat-select [(ngModel)]="level">
+              <mat-option *ngFor="let lvl of levels" [value]="lvl._id">{{lvl._id}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="custom-form-field">
+            <mat-label>Version:</mat-label>
+            <mat-select [(ngModel)]="version">
+              <mat-option *ngFor="let ver of versions" [value]="ver._id">{{ver._id}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field class="custom-form-field">
+          <mat-label>Dal Brand & SKU Id:</mat-label>
+          <mat-select [(ngModel)]="brandSKU">
+            <mat-option *ngFor="let dal of dalBrandSKU" [value]="dal.id">{{dal.brandAndSku}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+          <button mat-raised-button color="primary">Show</button>
+      </div>
+  </div>
+
+  <hr />

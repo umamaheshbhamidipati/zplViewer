@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 
+declare  let BrowserPrint:  any;
+
 @Component({
   selector: 'app-nested-form',
   templateUrl: './nested-form.component.html',
@@ -14,10 +16,23 @@ export class NestedFormComponent implements OnInit {
   myVal: boolean = false;
   myArr: any = [];
   url = 'http://192.168.3.6:3000/generateLabel';
+  apiEndPoint: any = `http://172.24.2.80:8086/`;
   blobSrc: any;
   width: any = '4';
   height: any = '1';
   printDensity: any = '8';
+
+  dalBrandSKU: any = [];
+  levels: any = [];
+  versions: any = [];
+  dalEncryptions: any = [];
+
+  brandSKU: any;
+  level: any;
+  version: any;
+  dalEncryption: any;
+  formatName: any;
+  zplCode: any;
 
   constructor(
       private fb: FormBuilder,
@@ -27,7 +42,112 @@ export class NestedFormComponent implements OnInit {
   ngOnInit() {
     this.labelsForm = this.fb.group({
       labels: new FormArray([])
-    })
+    });
+    this.getDalBrandSKU();
+    this.getLevels();
+    this.getVersions();
+    this.getDalEncryptions();
+  }
+
+  async getDalBrandSKU() {
+    try { 
+      let response = await fetch(this.apiEndPoint+'dal/dalBrandAndSku/all', {
+        method: 'GET', // or 'PUT'
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json.content, "PPP");
+      this.dalBrandSKU = json.content;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async getLevels() {
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/levelVersion/levels', {
+        method: 'GET',
+        headers: {
+          'Content-Type' : 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+      this.levels = json;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async getVersions() {
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/levelVersion/versions', {
+        method: 'GET',
+        headers: {
+          'Content-Type' : 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+      this.versions = json
+    }catch(error) {
+      console.log('Error:', error);
+    }
+  }
+
+  async getDalEncryptions() {
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/dalEncryption/all', {
+        method: 'GET',
+        headers: {
+          'Content-Type' : 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+      this.dalEncryptions = json
+    }catch(error) {
+      console.log('Error:', error);
+    }
+  }
+
+  async saveZPLCode() {
+    try { 
+      let response = await fetch(this.apiEndPoint+'dal/qrFormat/create', {
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify({
+          formatData: {
+            zplCode: this.zplCode,
+            formatName: this.formatName
+          }
+        }), // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+      if(json.id) {
+        // setTimeout(()=> {
+        // },4000);
+        this.zplCode = '';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  testPrint() {
+    let self = this;
+    BrowserPrint.getDefaultDevice('printer', function(printer: any) {
+      printer.send(
+        self.zplCode
+      )
+    },function(error_response :any) {
+      console.log(error_response);
+    });
   }
 
   // convenience getters for easy access to form fields
