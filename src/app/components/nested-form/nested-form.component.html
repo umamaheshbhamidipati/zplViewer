@@ -117,7 +117,14 @@
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field class="preview-field" *ngIf="x.Codes[j].type != '^GB'">
-                    <input type="text" matInput [(ngModel)]="c.text" placeholder="Text" />
+                    <!-- <input type="text" matInput [(ngModel)]="c.text" placeholder="Text" /> -->
+                    <mat-label>Text</mat-label>
+                    <mat-select [(ngModel)]="c.text">
+                      <mat-option value="cName">Company Name</mat-option>
+                      <mat-option value="expDate">Expiry Date</mat-option>
+                      <mat-option value="mfgDate">Mfg. Date</mat-option>
+                      <mat-option value="012345678901">QR Code</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
         </div>
@@ -162,7 +169,7 @@
         <mat-form-field class="custom-form-field">
             <mat-label>Level:</mat-label>
             <mat-select [(ngModel)]="level">
-              <mat-option *ngFor="let lvl of levels" [value]="lvl._id">{{lvl._id}}</mat-option>
+              <mat-option *ngFor="let lvl of levels" [value]="lvl">{{lvl}}</mat-option>
             </mat-select>
           </mat-form-field>
     </div>
@@ -170,7 +177,7 @@
         <mat-form-field class="custom-form-field">
             <mat-label>Version:</mat-label>
             <mat-select [(ngModel)]="version">
-              <mat-option *ngFor="let ver of versions" [value]="ver._id">{{ver._id}}</mat-option>
+              <mat-option *ngFor="let ver of versions" [value]="ver">{{ver}}</mat-option>
             </mat-select>
           </mat-form-field>
     </div>
@@ -187,32 +194,32 @@
   <div style="margin: 0 10px" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
       <mat-form-field>
-        <input matInput placeholder="Carrying Capacity"/>
+        <input matInput [(ngModel)]="carryingCapacity" placeholder="Carrying Capacity"/>
       </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <input matInput placeholder="Batch"/>
+            <input matInput [(ngModel)]="batch" placeholder="Batch"/>
           </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <input matInput placeholder="MFD"/>
+            <input matInput [(ngModel)]="mfg" placeholder="MFD"/>
           </mat-form-field>
     </div>
     <div>
         <mat-form-field >
-            <input matInput placeholder="Expiry"/>
+            <input matInput [(ngModel)]="expiry" placeholder="Expiry"/>
           </mat-form-field>
     </div>
     <div>
         <mat-form-field >
-            <input matInput placeholder="No. of Codes"/>
+            <input matInput [(ngModel)]="noOfCodes" placeholder="No. of Codes"/>
           </mat-form-field>
     </div>
   </div>
   <div style="padding-top: 20px;" fxLayoutAlign="center">
-    <button mat-raised-button color="primary">Generate QR Code</button>
+    <button mat-raised-button color="primary" (click)="generateQRCode();">Generate QR Code</button>
   </div>
 
   <hr/>
@@ -227,7 +234,7 @@
         <mat-form-field class="custom-form-field">
             <mat-label>Level:</mat-label>
             <mat-select [(ngModel)]="level">
-              <mat-option *ngFor="let lvl of levels" [value]="lvl._id">{{lvl._id}}</mat-option>
+              <mat-option *ngFor="let lvl of levels" [value]="lvl">{{lvl}}</mat-option>
             </mat-select>
           </mat-form-field>
     </div>
@@ -235,7 +242,7 @@
         <mat-form-field class="custom-form-field">
             <mat-label>Version:</mat-label>
             <mat-select [(ngModel)]="version">
-              <mat-option *ngFor="let ver of versions" [value]="ver._id">{{ver._id}}</mat-option>
+              <mat-option *ngFor="let ver of versions" [value]="ver">{{ver}}</mat-option>
             </mat-select>
           </mat-form-field>
     </div>
@@ -248,8 +255,22 @@
         </mat-form-field>
       </div>
       <div>
-          <button mat-raised-button color="primary">Show</button>
+          <button mat-raised-button color="primary" (click)="getQRCodes();">Show</button>
       </div>
   </div>
 
   <hr />
+
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <mat-form-field>
+      <mat-label>Select QR Code</mat-label>
+      <mat-select (selectionChange)="currentSelectedFormat($event);">
+        <mat-option *ngFor="let qr of qrCodes" [value]="qr.id">
+          {{qr.formatData ? qr.formatData.formatName : ''}}
+          <!-- {{qr.formatData | json}} -->
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <hr/>

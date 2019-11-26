@@ -16,7 +16,8 @@ export class NestedFormComponent implements OnInit {
   myVal: boolean = false;
   myArr: any = [];
   url = 'http://192.168.3.6:3000/generateLabel';
-  apiEndPoint: any = `http://172.24.2.80:8086/`;
+  // apiEndPoint: any = `http://172.24.2.80:8086/`;
+  apiEndPoint: any = `http://192.168.2.120:8086/`;
   blobSrc: any;
   width: any = '4';
   height: any = '1';
@@ -34,6 +35,15 @@ export class NestedFormComponent implements OnInit {
   formatName: any;
   zplCode: any;
 
+  carryingCapacity: any;
+  batch: any;
+  mfg: any;
+  expiry: any;
+  noOfCodes: any;
+
+  selectedFormat: any;
+  qrCodes: any = [];
+
   constructor(
       private fb: FormBuilder,
       private _sanitizer: DomSanitizer
@@ -47,6 +57,7 @@ export class NestedFormComponent implements OnInit {
     this.getLevels();
     this.getVersions();
     this.getDalEncryptions();
+    this.getAllQRCodes();
   }
 
   async getDalBrandSKU() {
@@ -114,15 +125,21 @@ export class NestedFormComponent implements OnInit {
   }
 
   async saveZPLCode() {
+    if(!this.zplCode || !this.formatName) {
+      alert('Please fill all the fields!');
+      return;
+    }
+    let data = {
+        formatData: {
+        zplCode: this.zplCode,
+        formatName: this.formatName
+      }
+    }
+    console.log(data,"pp")
     try { 
       let response = await fetch(this.apiEndPoint+'dal/qrFormat/create', {
         method: 'POST', // or 'PUT'
-        body: JSON.stringify({
-          formatData: {
-            zplCode: this.zplCode,
-            formatName: this.formatName
-          }
-        }), // data can be `string` or {object}!
+        body: JSON.stringify(data), // data can be `string` or {object}!
         headers: {
           'Content-Type': 'application/json'
         }
@@ -202,6 +219,7 @@ export class NestedFormComponent implements OnInit {
     this.myArr.map((x: { Codes: any; },i: any)=> {
       console.log(x);
       let c = x.Codes;
+      str += `^FX ${i}`
       c.map((y: any,j: any)=> {
         console.log(y);
         if(y.type == '^FD') { // text
@@ -224,6 +242,7 @@ export class NestedFormComponent implements OnInit {
     str +='^XZ'
       
     console.log(str, "::::::Uma:::::::");
+    this.zplCode = str;
     this.callApi(str);
   }
 
@@ -253,4 +272,91 @@ export class NestedFormComponent implements OnInit {
     }
   }
 
+  async generateQRCode() {
+    let data = {
+      "batch": this.batch,
+      "mfd": this.mfg,
+      "expiry": this.expiry,
+      "carryingCapacity": Number(this.carryingCapacity),
+      "dalPackLevel": this.level,
+      "dalCodeVersion": this.version,
+      "dalBrandAndSkuId": this.brandSKU,
+      "numberOfCodes": Number(this.noOfCodes),
+      "dalEncryptionId": Number(this.dalEncryption)
+    }
+    console.log(data);
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/dalQRInformation/generateQRCode', {
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify(data), // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+    }catch(error) {
+      console.log('Error:',error)
+    }
+  }
+
+  async getQRCodes() {
+    let data = {
+      "batch": this.batch,
+      "dalBrandAndSkuId": this.brandSKU,
+      "statusId":2,
+      "dalEncryptionId": Number(this.dalEncryption),
+      "dalPackLevel":  this.level,
+      "dalCodeVersion": this.version
+    }
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/dalQRInformation/all', {
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify(data), // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json, "PPP");
+    }catch(error) {
+      console.log('Error:',error)
+    }
+  }
+
+  async getAllQRCodes() {
+    try {
+      let response = await fetch(this.apiEndPoint+'dal/qrFormat/all', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      let json = await response.json();
+      console.log(json);
+      this.qrCodes = json.content;
+    } catch(error) {
+      console.log(error)
+    }
+  }
+
+  currentSelectedFormat(e :any) {
+    console.log(e);
+    // console.log(this.selectedFormat);
+    this.qrCodes.map((q: any,i: any)=>{
+      if(e.value == q.id) {
+        let str = q.formatData.zplCode;
+        str = this.replaceAll(str, 'cName', '${cName}');
+        str = this.replaceAll(str, 'expDate', '${expDate}')
+        str = this.replaceAll(str, 'mfgDate', '${mfgDate}')
+        str = this.replaceAll(str, '012345678901', '${code}')
+        this.selectedFormat = str;
+        console.log("::::::::: "+str+" :::::::::")
+      }
+    })
+  }
+
+  replaceAll(str: any, find: any, replace: any) {
+    return str.replace(new RegExp(find, 'g'), replace);
+  }
 }
