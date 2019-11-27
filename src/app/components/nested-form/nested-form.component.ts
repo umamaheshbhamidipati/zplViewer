@@ -219,7 +219,7 @@ export class NestedFormComponent implements OnInit {
     this.myArr.map((x: { Codes: any; },i: any)=> {
       console.log(x);
       let c = x.Codes;
-      str += `^FX ${i}`
+      str += `^FX`
       c.map((y: any,j: any)=> {
         console.log(y);
         if(y.type == '^FD') { // text
@@ -239,6 +239,7 @@ export class NestedFormComponent implements OnInit {
         }
       })
     })
+    str += `^FX`
     str +='^XZ'
       
     console.log(str, "::::::Uma:::::::");
@@ -342,16 +343,115 @@ export class NestedFormComponent implements OnInit {
 
   currentSelectedFormat(e :any) {
     console.log(e);
-    // console.log(this.selectedFormat);
     this.qrCodes.map((q: any,i: any)=>{
       if(e.value == q.id) {
         let str = q.formatData.zplCode;
-        str = this.replaceAll(str, 'cName', '${cName}');
-        str = this.replaceAll(str, 'expDate', '${expDate}')
-        str = this.replaceAll(str, 'mfgDate', '${mfgDate}')
-        str = this.replaceAll(str, '012345678901', '${code}')
+        str = str.split('^FX');
         this.selectedFormat = str;
-        console.log("::::::::: "+str+" :::::::::")
+        let zpl: any;
+        zpl = this.selectedFormat[0]+'\n';
+        if(this.selectedFormat[1]) {
+          let str: string;
+          str = this.selectedFormat[1];
+          str = this.replaceAll(str, 'cName', "${qrCodes[i].cName}");
+          str = this.replaceAll(str, 'expDate', "${qrCodes[i].expDate}")
+          str = this.replaceAll(str, 'mfgDate', "${qrCodes[i].mfgDate}")
+          str = this.replaceAll(str, '012345678901', "${qrCodes[i].qrCode}")
+          str = '${qrCodes[i] ? '+ ('`'+str+'`') + " : ''}"
+          zpl += str
+        }
+        if(this.selectedFormat[2]) {
+          let str: string;
+          str = this.selectedFormat[2];
+          str = this.replaceAll(str, 'cName', "${qrCodes[i+1].cName}");
+          str = this.replaceAll(str, 'expDate', "${qrCodes[i+1].expDate}")
+          str = this.replaceAll(str, 'mfgDate', "${qrCodes[i+1].mfgDate}")
+          str = this.replaceAll(str, '012345678901', "${qrCodes[i+1].qrCode}")
+          str = '${qrCodes[i+1] ? '+ ('`'+str+'`') + " : ''}"
+          zpl += str
+        }
+        if(this.selectedFormat[3]) {
+          let str: string;
+          str = this.selectedFormat[3];
+          str = this.replaceAll(str, 'cName', "${qrCodes[i+2].cName}");
+          str = this.replaceAll(str, 'expDate', "${qrCodes[i+2].expDate}")
+          str = this.replaceAll(str, 'mfgDate', "${qrCodes[i+2].mfgDate}")
+          str = this.replaceAll(str, '012345678901', "${qrCodes[i+2].qrCode}")
+          str = '${qrCodes[i+2] ? '+ ('`'+str+'`') + " : ''}"
+          zpl += str
+        }
+        zpl += this.selectedFormat[(this.selectedFormat.length - 1)]+'\n'
+        let qrCodes = [
+          {
+          'cName':'Dhanuka',
+          'qrCode' : 'PQRST',
+          'mfgDate' : '1999/11',
+          'expDate': '2000/11'
+          },
+          {
+          'cName':'Dhanuka1',
+          'qrCode' : 'PQRST1',
+          'mfgDate' : '2000/11',
+          'expDate': '2001/11'
+          },
+          {
+          'cName':'Dhanuka2',
+          'qrCode' : 'PQRST2',
+          'mfgDate' : '2001/11',
+          'expDate': '2002/11'
+          },
+          {
+          'cName':'Dhanuka3',
+          'qrCode' : 'PQRST3',
+          'mfgDate' : '2002/11',
+          'expDate': '2003/11'
+          },
+          {
+          'cName':'Dhanuka4',
+          'qrCode' : 'PQRST4',
+          'mfgDate' : '2003/11',
+          'expDate': '2004/11'
+          },
+          {
+          'cName':'Dhanuka5',
+          'qrCode' : 'PQRST5',
+          'mfgDate' : '2004/11',
+          'expDate': '2005/11'
+          },
+          {
+          'cName':'Dhanuka6',
+          'qrCode' : 'PQRST6',
+          'mfgDate' : '2005/11',
+          'expDate': '2006/11'
+          },
+          {
+          'cName':'Dhanuka7',
+          'qrCode' : 'PQRS7',
+          'mfgDate' : '2006/11',
+          'expDate': '2007/11'
+          },
+          {
+          'cName':'Dhanuka7',
+          'qrCode' : 'PQRS7',
+          'mfgDate' : '2006/11',
+          'expDate': '2007/11'
+          },
+          {
+          'cName':'Dhanuka7',
+          'qrCode' : 'PQRS7',
+          'mfgDate' : '2006/11',
+          'expDate': '2007/11'
+          }
+        ]
+        let tpl: string | number;
+        for(let i = 0; i < qrCodes.length; i = i+(this.selectedFormat.length-2)) { // check here
+          if(!tpl) {
+            tpl = eval('`'+zpl+'`')
+          }else {
+            tpl += eval('`'+zpl+'`')
+          }
+        }
+        console.log(tpl, " ::::::: ppppp ::::::::");
       }
     })
   }
@@ -359,4 +459,5 @@ export class NestedFormComponent implements OnInit {
   replaceAll(str: any, find: any, replace: any) {
     return str.replace(new RegExp(find, 'g'), replace);
   }
+  
 }
