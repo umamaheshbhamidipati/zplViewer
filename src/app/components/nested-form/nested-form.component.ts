@@ -43,11 +43,21 @@ export class NestedFormComponent implements OnInit {
 
   selectedFormat: any;
   qrCodes: any = [];
-
+  batchCodes: any = [];
   constructor(
       private fb: FormBuilder,
       private _sanitizer: DomSanitizer
-    ) { }
+    ) { 
+      for(let i=0; i < 50; i++) {
+        this.batchCodes.push({
+        'id': i+1,
+        'qrCode': Math.random().toString(36).substring(2,12).toUpperCase(),
+        'cName': 'Dhanuka',
+        'mfgDate' : '2019/11',
+        'expDate': '2020/11'
+      })
+    }
+    }
 
   ngOnInit() {
     this.labelsForm = this.fb.group({
@@ -345,105 +355,27 @@ export class NestedFormComponent implements OnInit {
     console.log(e);
     this.qrCodes.map((q: any,i: any)=>{
       if(e.value == q.id) {
-        let str = q.formatData.zplCode;
-        str = str.split('^FX');
-        this.selectedFormat = str;
-        let zpl: any;
-        zpl = this.selectedFormat[0]+'\n';
-        if(this.selectedFormat[1]) {
-          let str: string;
-          str = this.selectedFormat[1];
-          str = this.replaceAll(str, 'cName', "${qrCodes[i].cName}");
-          str = this.replaceAll(str, 'expDate', "${qrCodes[i].expDate}")
-          str = this.replaceAll(str, 'mfgDate', "${qrCodes[i].mfgDate}")
-          str = this.replaceAll(str, '012345678901', "${qrCodes[i].qrCode}")
-          str = '${qrCodes[i] ? '+ ('`'+str+'`') + " : ''}"
-          zpl += str
+
+        this.selectedFormat = (q.formatData.zplCode).split('^FX');
+        let zpl: any  = this.selectedFormat[0];
+        let str: string;
+
+        for(let i = 1; i < (this.selectedFormat.length -1); i++) {
+          str = ''
+          str = this.selectedFormat[i];
+          let x = `${ (i-1) != 0 ? '+'+(i-1) : ''}`;
+          str = this.replaceAll(str, 'cName', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].cName}')
+          str = this.replaceAll(str, 'expDate', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].expDate}')
+          str = this.replaceAll(str, 'mfgDate', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].mfgDate}')
+          str = this.replaceAll(str, '012345678901', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].qrCode}')
+          str = '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'] ? '+ ('`'+str+'`') + " : ''}"
+          zpl += str;
         }
-        if(this.selectedFormat[2]) {
-          let str: string;
-          str = this.selectedFormat[2];
-          str = this.replaceAll(str, 'cName', "${qrCodes[i+1].cName}");
-          str = this.replaceAll(str, 'expDate', "${qrCodes[i+1].expDate}")
-          str = this.replaceAll(str, 'mfgDate', "${qrCodes[i+1].mfgDate}")
-          str = this.replaceAll(str, '012345678901', "${qrCodes[i+1].qrCode}")
-          str = '${qrCodes[i+1] ? '+ ('`'+str+'`') + " : ''}"
-          zpl += str
-        }
-        if(this.selectedFormat[3]) {
-          let str: string;
-          str = this.selectedFormat[3];
-          str = this.replaceAll(str, 'cName', "${qrCodes[i+2].cName}");
-          str = this.replaceAll(str, 'expDate', "${qrCodes[i+2].expDate}")
-          str = this.replaceAll(str, 'mfgDate', "${qrCodes[i+2].mfgDate}")
-          str = this.replaceAll(str, '012345678901', "${qrCodes[i+2].qrCode}")
-          str = '${qrCodes[i+2] ? '+ ('`'+str+'`') + " : ''}"
-          zpl += str
-        }
-        zpl += this.selectedFormat[(this.selectedFormat.length - 1)]+'\n'
-        let qrCodes = [
-          {
-          'cName':'Dhanuka',
-          'qrCode' : 'PQRST',
-          'mfgDate' : '1999/11',
-          'expDate': '2000/11'
-          },
-          {
-          'cName':'Dhanuka1',
-          'qrCode' : 'PQRST1',
-          'mfgDate' : '2000/11',
-          'expDate': '2001/11'
-          },
-          {
-          'cName':'Dhanuka2',
-          'qrCode' : 'PQRST2',
-          'mfgDate' : '2001/11',
-          'expDate': '2002/11'
-          },
-          {
-          'cName':'Dhanuka3',
-          'qrCode' : 'PQRST3',
-          'mfgDate' : '2002/11',
-          'expDate': '2003/11'
-          },
-          {
-          'cName':'Dhanuka4',
-          'qrCode' : 'PQRST4',
-          'mfgDate' : '2003/11',
-          'expDate': '2004/11'
-          },
-          {
-          'cName':'Dhanuka5',
-          'qrCode' : 'PQRST5',
-          'mfgDate' : '2004/11',
-          'expDate': '2005/11'
-          },
-          {
-          'cName':'Dhanuka6',
-          'qrCode' : 'PQRST6',
-          'mfgDate' : '2005/11',
-          'expDate': '2006/11'
-          },
-          {
-          'cName':'Dhanuka7',
-          'qrCode' : 'PQRS7',
-          'mfgDate' : '2006/11',
-          'expDate': '2007/11'
-          },
-          {
-          'cName':'Dhanuka7',
-          'qrCode' : 'PQRS7',
-          'mfgDate' : '2006/11',
-          'expDate': '2007/11'
-          },
-          {
-          'cName':'Dhanuka7',
-          'qrCode' : 'PQRS7',
-          'mfgDate' : '2006/11',
-          'expDate': '2007/11'
-          }
-        ]
+
+        zpl += '\n'+this.selectedFormat[(this.selectedFormat.length - 1)]+'\n \n'
+        let qrCodes = this.batchCodes;
         let tpl: string | number;
+
         for(let i = 0; i < qrCodes.length; i = i+(this.selectedFormat.length-2)) { // check here
           if(!tpl) {
             tpl = eval('`'+zpl+'`')
@@ -451,7 +383,9 @@ export class NestedFormComponent implements OnInit {
             tpl += eval('`'+zpl+'`')
           }
         }
-        console.log(tpl, " ::::::: ppppp ::::::::");
+        
+        console.log(tpl, " ::::::: generated zpl label ::::::::");
+
       }
     })
   }
