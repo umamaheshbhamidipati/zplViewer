@@ -1,16 +1,23 @@
-<p>Label Format Creation</p>
-<div style="margin-left: 20px;">
+<mat-toolbar color="primary">
+  <div fxLayoutAlign="center">Label Format Creation</div>
+</mat-toolbar>
+<div style="margin: 20px 80px;">
     <div fxLayout="column" fxLayoutAlign="start">
-        <div>
-            <mat-form-field class="custom-form-field">
+        <div fxFlex="40%">
+          <div fxFlex="40%" fxLayout="row" fxLayoutAlign="space-between center">
+            <div>
+              <mat-form-field class="custom-form-field">
                 <input matInput [(ngModel)]="width" placeholder="Width(inches)*" />
-            </mat-form-field>
-        </div>
-        <div>
-            <mat-form-field class="custom-form-field">
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field class="custom-form-field">
                 <input matInput [(ngModel)]="height" placeholder="Height(inches)*" />
-            </mat-form-field>
+              </mat-form-field>
+            </div>
+          </div>
         </div>
+        
         <div>
             <p>Print Density* : {{printDensity}}dpmm</p>
         </div>
@@ -51,7 +58,6 @@
                     <mat-option value="^CFG">Font G</mat-option>
                     <mat-option value="^CFH">Font H</mat-option>
                     <mat-option value="^CF0">0 (Scaleable)</mat-option>
-                    <!-- <mat-option value="^CFGS">GS (for symbols so ignored)</mat-option> -->
                     <mat-option value="^CFP">Font P</mat-option>
                     <mat-option value="^CFQ">Font Q</mat-option>
                     <mat-option value="^CFR">Font R</mat-option>
@@ -98,6 +104,7 @@
                     <mat-option *ngFor="let i of [200]" value="{{i}}">{{i}}</mat-option>
                 </mat-select>
             </mat-form-field>
+            
             <mat-form-field class="preview-field">
             <input type="number" min="0" matInput [(ngModel)]="c.x" placeholder="X (Postion)" />
             </mat-form-field>
@@ -117,7 +124,6 @@
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field class="preview-field" *ngIf="x.Codes[j].type != '^GB'">
-                    <!-- <input type="text" matInput [(ngModel)]="c.text" placeholder="Text" /> -->
                     <mat-label>Text</mat-label>
                     <mat-select [(ngModel)]="c.text">
                       <mat-option value="cName">Company Name</mat-option>
@@ -126,11 +132,17 @@
                       <mat-option value="012345678901">QR Code</mat-option>
                     </mat-select>
                 </mat-form-field>
+
+                <!-- dummy label -->
+                <mat-form-field class="preview-field" *ngIf="(x.Codes[j].type == '^BQ,2' || x.Codes[j].type == '^BXN' || x.Codes[j].type == '^GB')" style="visibility: hidden;">
+                    <input type="number" min="0" matInput [(ngModel)]="c.x" placeholder="X (Postion)" />
+                </mat-form-field>
+                <!-- dummy label -->
             </div>
         </div>
     </div>
 
-    <div style="padding-top: 20px;" fxLayout="row" fxLayoutAlign="center center">
+    <div style="padding-top: 20px;padding-bottom: 20px;" fxLayout="row" fxLayoutAlign="center center">
         <button mat-raised-button color="primary" (click)="generateZpl();">Generate & Preview</button>
     </div>
 
@@ -149,14 +161,13 @@
             <button style="margin-top: 20px;" mat-raised-button color="primary" (click)="saveZPLCode();">Save <mat-icon>save</mat-icon></button>
           </div>
         </div>
-        <!-- <div *ngIf="!blobSrc">Please click on Generate</div> -->
       </div>
 </div>
 
-
-<hr />
-
-<div fxLayout="row" fxLayoutAlign="space-around center">
+<mat-toolbar color="primary">
+  <div fxLayoutAlign="center">Generate Codes</div>
+</mat-toolbar>
+<div style="margin: 30px 80px 20px" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
       <mat-form-field class="custom-form-field">
         <mat-label>Dal Brand & SKU Id:</mat-label>
@@ -189,9 +200,17 @@
             </mat-select>
           </mat-form-field>
     </div>
+    <div>
+      <mat-form-field class="custom-form-field" style="visibility: hidden;">
+          <mat-label>Dal Encryption:</mat-label>
+          <mat-select [(ngModel)]="dalEncryption">
+            <mat-option *ngFor="let dal of dalEncryptions" [value]="dal.id">{{dal.encryptionName}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  </div>
   </div>
 
-  <div style="margin: 0 10px" fxLayout="row" fxLayoutAlign="space-between center">
+  <div style="margin: 20px 80px" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
       <mat-form-field>
         <input matInput [(ngModel)]="carryingCapacity" placeholder="Carrying Capacity"/>
@@ -224,7 +243,7 @@
 
   <hr/>
 
-  <div style="margin: 0 20px;" fxLayout="row" fxLayoutAlign="space-between center">
+  <div style="margin: 30px 80px 20px" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
         <mat-form-field>
             <input matInput placeholder="Batch"/>
@@ -259,9 +278,31 @@
       </div>
   </div>
 
-  <hr />
+  <div style="padding: 20px 0;">
+    <!-- <div *ngFor="let x of batchCodes" fxLayoutAlign="center">
+      <p>{{x.qrCode}}</p>
+    </div> -->
+    <table style="margin: auto;" *ngIf="batchCodes.length > 0">
+        <tr>
+          <th>QRCode</th>
+          <!-- <th>Lastname</th> -->
+        </tr>
+        <tr *ngFor="let x of batchCodes">
+          <td>{{x.qrCode}}</td>
+        </tr>
+        <!-- <tr>
+          <td>Lois</td>
+          <td>Griffin</td>
+        </tr> -->
+      </table>
+   
+  </div>
 
-  <div fxLayout="row" fxLayoutAlign="center center">
+  <mat-toolbar color="primary">
+    <div fxLayoutAlign="center">View Codes</div>
+  </mat-toolbar>
+
+  <div style="margin: 30px 80px 20px" fxLayout="column" fxLayoutAlign="center center">
     <mat-form-field>
       <mat-label>Select QR Code</mat-label>
       <mat-select (selectionChange)="currentSelectedFormat($event);">
@@ -271,6 +312,9 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <div style="padding-top: 20px;">
+      <button mat-raised-button color="primary" (click)="printSelected();">Print</button>
+    </div>
   </div>
 
   <hr/>

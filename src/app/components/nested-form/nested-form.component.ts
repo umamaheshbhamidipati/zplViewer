@@ -44,19 +44,20 @@ export class NestedFormComponent implements OnInit {
   selectedFormat: any;
   qrCodes: any = [];
   batchCodes: any = [];
+  finalFullCodeZpl: any;
   constructor(
       private fb: FormBuilder,
       private _sanitizer: DomSanitizer
     ) { 
-      for(let i=0; i < 50; i++) {
-        this.batchCodes.push({
-        'id': i+1,
-        'qrCode': Math.random().toString(36).substring(2,12).toUpperCase(),
-        'cName': 'Dhanuka',
-        'mfgDate' : '2019/11',
-        'expDate': '2020/11'
-      })
-    }
+      // for(let i=0; i < 50; i++) {
+      //   this.batchCodes.push({
+      //   'id': i+1,
+      //   'qrCode': Math.random().toString(36).substring(2,12).toUpperCase(),
+      //   'cName': 'DHANUKA',
+      //   'mfgDate' : '2019/11',
+      //   'expDate': '2020/11'
+      //   })
+      // }
     }
 
   ngOnInit() {
@@ -156,6 +157,7 @@ export class NestedFormComponent implements OnInit {
       });
       let json = await response.json();
       console.log(json, "PPP");
+      this.getAllQRCodes();
       if(json.id) {
         // setTimeout(()=> {
         // },4000);
@@ -329,6 +331,10 @@ export class NestedFormComponent implements OnInit {
         }
       });
       let json = await response.json();
+      this.batchCodes = json.content;
+      this.batchCodes.map((b: any,j: any)=> {
+        b['cName'] = 'Dhanuka'
+      })
       console.log(json, "PPP");
     }catch(error) {
       console.log('Error:',error)
@@ -358,15 +364,14 @@ export class NestedFormComponent implements OnInit {
 
         this.selectedFormat = (q.formatData.zplCode).split('^FX');
         let zpl: any  = this.selectedFormat[0];
-        let str: string;
-
+        
         for(let i = 1; i < (this.selectedFormat.length -1); i++) {
-          str = ''
+          let str: string = '';
           str = this.selectedFormat[i];
           let x = `${ (i-1) != 0 ? '+'+(i-1) : ''}`;
           str = this.replaceAll(str, 'cName', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].cName}')
-          str = this.replaceAll(str, 'expDate', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].expDate}')
-          str = this.replaceAll(str, 'mfgDate', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].mfgDate}')
+          str = this.replaceAll(str, 'expDate', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].expiry}')
+          str = this.replaceAll(str, 'mfgDate', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].mfd}')
           str = this.replaceAll(str, '012345678901', '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'].qrCode}')
           str = '${qrCodes[i'+((Number(x) !== 0) ? x : '')+'] ? '+ ('`'+str+'`') + " : ''}"
           zpl += str;
@@ -383,7 +388,7 @@ export class NestedFormComponent implements OnInit {
             tpl += eval('`'+zpl+'`')
           }
         }
-        
+        this.finalFullCodeZpl = tpl;
         console.log(tpl, " ::::::: generated zpl label ::::::::");
 
       }
@@ -392,6 +397,17 @@ export class NestedFormComponent implements OnInit {
 
   replaceAll(str: any, find: any, replace: any) {
     return str.replace(new RegExp(find, 'g'), replace);
+  }
+
+  printSelected() {
+    let self = this;
+    BrowserPrint.getDefaultDevice('printer', function(printer: any) {
+      printer.send(
+        self.finalFullCodeZpl
+      )
+    },function(error_response :any) {
+      console.log(error_response);
+    });
   }
   
 }
