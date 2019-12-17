@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToastrService } from 'ngx-toastr';
+
 
 declare  let BrowserPrint:  any;
 
@@ -45,30 +47,33 @@ export class NestedFormComponent implements OnInit {
   qrCodes: any = [];
   batchCodes: any = [];
   finalFullCodeZpl: any;
+  myInterval: any;
+
   constructor(
       private fb: FormBuilder,
-      private _sanitizer: DomSanitizer
+      private _sanitizer: DomSanitizer,
+      private toaster: ToastrService
     ) { 
-      // for(let i=0; i < 50; i++) {
-      //   this.batchCodes.push({
-      //   'id': i+1,
-      //   'qrCode': Math.random().toString(36).substring(2,12).toUpperCase(),
-      //   'cName': 'DHANUKA',
-      //   'mfgDate' : '2019/11',
-      //   'expDate': '2020/11'
-      //   })
-      // }
+      for(let i=0; i < 10; i++) {
+        this.batchCodes.push({
+        'id': i+1,
+        'qrCode': Math.random().toString(36).substring(2,12).toUpperCase(),
+        'cName': 'DHANUKA',
+        'mfgDate' : '2019/11',
+        'expDate': '2020/11'
+        })
+      }
     }
 
   ngOnInit() {
     this.labelsForm = this.fb.group({
       labels: new FormArray([])
     });
-    this.getDalBrandSKU();
-    this.getLevels();
-    this.getVersions();
-    this.getDalEncryptions();
-    this.getAllQRCodes();
+    // this.getDalBrandSKU();
+    // this.getLevels();
+    // this.getVersions();
+    // this.getDalEncryptions();
+    // this.getAllQRCodes();
   }
 
   async getDalBrandSKU() {
@@ -170,7 +175,10 @@ export class NestedFormComponent implements OnInit {
 
   testPrint() {
     let self = this;
+    self.zplCode = '^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ'
+    
     BrowserPrint.getDefaultDevice('printer', function(printer: any) {
+      console.log(printer)
       printer.send(
         self.zplCode
       )
@@ -308,6 +316,7 @@ export class NestedFormComponent implements OnInit {
       });
       let json = await response.json();
       console.log(json, "PPP");
+      this.toaster.success(json.message);
     }catch(error) {
       console.log('Error:',error)
     }
@@ -335,6 +344,7 @@ export class NestedFormComponent implements OnInit {
       this.batchCodes.map((b: any,j: any)=> {
         b['cName'] = 'Dhanuka'
       })
+      // this.toaster.success(json.message);
       console.log(json, "PPP");
     }catch(error) {
       console.log('Error:',error)
@@ -401,13 +411,109 @@ export class NestedFormComponent implements OnInit {
 
   printSelected() {
     let self = this;
-    BrowserPrint.getDefaultDevice('printer', function(printer: any) {
-      printer.send(
-        self.finalFullCodeZpl
-      )
-    },function(error_response :any) {
-      console.log(error_response);
-    });
+    BrowserPrint.getLocalDevices(function(prntr: any) {
+      let printers_available = false;
+      console.log(prntr);
+      prntr = prntr.printer;
+      console.log(prntr)
+      if (prntr != undefined) {
+        for (let i = 0; i < prntr.length; i++) {
+          if (prntr[i].connection == 'usb') {
+            printers_available = true;
+          }
+        }
+      }
+      console.log(printers_available, "printer Availability!")
+      if(!printers_available) {
+        self.toaster.warning("No Zebra Printers could be found!")
+      }else {
+        // printer is available
+        BrowserPrint.getDefaultDevice('printer', function(printer: any) {
+          console.log(printer);
+          printer.read(function(x:any){
+            alert(1);
+          },function(y: any) {
+            alert(2);
+          })
+          printer.sendThenRead("~HQES",
+          function(text: any) {
+            console.log(text);
+            var is_error = text.charAt(70);
+            var media = text.charAt(88);
+            var head = text.charAt(87);
+            var pause = text.charAt(84);
+            console.log(media, "media")
+            if (is_error == '0') {
+              printer.send(
+                self.finalFullCodeZpl,function (p: any) {
+                  console.log(p);
+                  // alert('Print finsihed')
+                  // self.myInterval = setInterval(function() {
+                  //   printer.sendThenRead("PRINTER",
+                  //   function(txt: any) {
+                  //     console.log(txt, "Uma")
+                  //   })
+                  // },1000)
+                  self.toaster.success("print command send finished");
+                }, function (q: any) {
+                  console.log(q);
+                  // alert('Print error')
+                }
+              )
+              printer.sendFinishedCallback(function(txtnew: any) {
+                console.log(txtnew);
+                self.toaster.success('printing finished')
+              })
+            }
+            printer.sendFinishedCallback(function(e: any) {
+              console.log(e, 'success call');
+            }) 
+            printer.sendErrorCallback(function(e:any) {
+              console.log(e, "error call")
+            })
+            if(is_error == '1') {
+              self.toaster.warning('Paper out')
+            }
+            if(is_error == '2') {
+              self.toaster.warning('Ribbon out')
+            }
+            if(is_error == '4') {
+              self.toaster.warning('Media Door Open');
+            }
+            if(is_error == '8') {
+              self.toaster.warning('Cutter Fault');
+            }
+            if (head == '1'){
+              self.toaster.warning("Printhead Overheating");
+            }
+            if (head == '2') {
+              self.toaster.warning("Motor Overheating");
+            }
+            if (head == '4') {
+              self.toaster.warning("Printhead Fault");
+            }
+            if (head == '8') {
+              self.toaster.warning("Incorrect Printhead");
+            }
+            if (pause == '1') {
+              self.toaster.warning("Printer Paused");
+            }
+          }, function(error: any){
+            console.log(error);
+            self.toaster.error(error);
+            self.toaster.warning("Please verify printer is connected properly or not")
+          })
+        });
+      }
+    })
+  }
+
+  printComplete() {
+    alert('print completed')
+  }
+
+  printError() {
+    alert('Printer Error')
   }
   
 }

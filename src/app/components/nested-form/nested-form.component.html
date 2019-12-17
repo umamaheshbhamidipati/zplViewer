@@ -150,7 +150,7 @@
         <img id="label" [src]="blobSrc" />
     </div>
     <div>
-        <div *ngIf="blobSrc">
+        <div>
           <div>
             <mat-form-field>
               <input matInput placeholder="Label / Format Name" [(ngModel)]="formatName" required/>
@@ -282,19 +282,14 @@
     <!-- <div *ngFor="let x of batchCodes" fxLayoutAlign="center">
       <p>{{x.qrCode}}</p>
     </div> -->
-    <table style="margin: auto;" *ngIf="batchCodes.length > 0">
+    <!-- <table style="margin: auto;" *ngIf="batchCodes.length > 0">
         <tr>
           <th>QRCode</th>
-          <!-- <th>Lastname</th> -->
         </tr>
         <tr *ngFor="let x of batchCodes">
           <td>{{x.qrCode}}</td>
         </tr>
-        <!-- <tr>
-          <td>Lois</td>
-          <td>Griffin</td>
-        </tr> -->
-      </table>
+      </table> -->
    
   </div>
 
