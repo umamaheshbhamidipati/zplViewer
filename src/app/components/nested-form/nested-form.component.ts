@@ -174,6 +174,35 @@ export class NestedFormComponent implements OnInit {
   }
 
   testPrint() {
+
+    var zpl = "^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ"
+    
+    // var printWindow = window.open();
+    // printWindow.document.open('text/plain')
+    // printWindow.document.write(zpl);
+    // printWindow.document.close();
+    // printWindow.focus();
+    // printWindow.print();
+    // printWindow.close();
+ 
+    // var ip_addr = "http://localhost:9100/write"
+  // var output = document.getElementById("output");
+  // var url = "http://localhost:9100/write";
+  // var method = "POST";
+  // var async = true;
+  // var request = new XMLHttpRequest();
+
+  // request.onload = function () {
+  //   var status = request.status; // HTTP response status, e.g., 200 for "200 OK"
+  //   var data = request.responseText; // Returned data, e.g., an HTML document.
+  //   output.innerHTML = "Status: " + status + "<br>" + data;
+  // }
+
+  // request.open(method, url, async);
+  // // request.setRequestHeader("Content-Length", zpl.length);
+
+  // // Actually sends the request to the server.
+  // request.send(zpl)
     let self = this;
     self.zplCode = '^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ^XA^FO50,100^BXN,10,200^FDYourTextHere^FS^XZ'
     
@@ -185,6 +214,7 @@ export class NestedFormComponent implements OnInit {
     },function(error_response :any) {
       console.log(error_response);
     });
+    // wi
   }
 
   // convenience getters for easy access to form fields

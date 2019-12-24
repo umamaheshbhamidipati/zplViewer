@@ -234,7 +234,7 @@ export class AppComponent implements OnInit{
         this.zplArr.map((z: any,i: any)=> {
           str += '\n'
           str += `^FX ----Start of ${i+1}---- \n`
-          str += `^FO35,25^BQ,2,5^FDHA,${z.zplCode}^FS  \n`
+          str += `^FO${35}+${z.x ? z.x: ''},25^BQ,2,5^FDHA,${z.zplCode}^FS  \n`
           str += `^FX ----End of ${i+1}---- \n`
           str += '\n'
         })
